@@ -122,6 +122,16 @@ The current context can now be switched by selecting the new context in the drop
     The Inspector does not automatically switch the current context if a new one is discovered. This
     must be explicitly done using the dropdown.
 
+## Switch Window
+
+In browser sessions and webview contexts, use **Switch Window** to inspect another tab or window.
+The control is also available in native Mac2, Windows, and WinCore driver sessions. Opening the menu asks the
+driver for its current window handles. The active handle is highlighted. Select a different handle
+to switch to it. The Inspector refreshes the source and screenshot according to the current refresh
+settings and records the switch when recording is enabled.
+
+Reopen the menu after opening or closing a window to see the updated list.
+
 ## Toggle Automatic Source Refresh
 
 ![Pause Source Refresh Button](./assets/images/header/refresh-source-pause.png) ![Resume Source Refresh Button](./assets/images/header/refresh-source-resume.png)

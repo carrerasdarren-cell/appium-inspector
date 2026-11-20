@@ -1,5 +1,7 @@
 import {Divider, Space} from 'antd';
 
+import {DRIVERS} from '../../../constants/common.js';
+import {APP_MODE, NATIVE_APP} from '../../../constants/session-inspector.js';
 import {openLink} from '../../../polyfills.js';
 import ContextControlsGroup from './ContextControlsGroup.jsx';
 import DeviceControlsGroup from './DeviceControls/DeviceControlsGroup.jsx';
@@ -7,8 +9,18 @@ import DriverControlsGroup from './DriverControls/DriverControlsGroup.jsx';
 import GeneralControlsGroup from './GeneralControlsGroup.jsx';
 import SessionQuitControlsGroup from './SessionQuitControlsGroup.jsx';
 import SessionReloadButton from './SessionReloadButton.jsx';
+import WindowHandleSwitcher from './WindowHandleSwitcher.jsx';
 
 import styles from './Header.module.css';
+
+const WINDOW_DRIVERS = [
+  DRIVERS.CHROMIUM,
+  DRIVERS.GECKO,
+  DRIVERS.SAFARI,
+  DRIVERS.MAC2,
+  DRIVERS.WINDOWS,
+  DRIVERS.WINCORE,
+];
 
 /**
  * Parent container for control buttons located in the application header.
@@ -27,7 +39,16 @@ const HeaderButtons = (props) => {
     toggleAutoSessionRestart,
     featureCaps,
     sessionSettings,
+    driver,
+    methodCallInProgress,
+    isQuittingSession,
   } = props;
+
+  const canSwitchWindows =
+    featureCaps.browserName?.trim() ||
+    WINDOW_DRIVERS.includes(featureCaps.automationName) ||
+    (appMode === APP_MODE.WEB_HYBRID && currentContext && currentContext !== NATIVE_APP);
+  const windowSwitcherDisabled = Boolean(methodCallInProgress || isQuittingSession);
 
   return (
     <div className={styles.headerButtons}>
@@ -51,6 +72,14 @@ const HeaderButtons = (props) => {
           applyClientMethod={applyClientMethod}
           openLink={openLink}
         />
+        {canSwitchWindows && (
+          <WindowHandleSwitcher
+            key={JSON.stringify([driver?.sessionId, appMode, currentContext])}
+            executeDriverCommand={executeDriverCommand}
+            applyClientMethod={applyClientMethod}
+            disabled={windowSwitcherDisabled}
+          />
+        )}
         <GeneralControlsGroup {...props} />
         <SessionReloadButton
           autoSessionRestart={autoSessionRestart}
